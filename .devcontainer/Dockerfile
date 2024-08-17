@@ -18,9 +18,10 @@ RUN git clone https://github.com/flutter/flutter && \
 
 
 COPY . /dartServer 
-RUN mkdir build
-RUN dart compile exe /dartServer/bin/server -o /dartServer/dartserv
+# RUN mkdir build
+# RUN dart compile exe /dartServer/bin/server -o /dartServer/dartserv
 
 # FROM debian:buster-slim
 # COPY --from=builder /dartServer/build /bin
-CMD ["/dartServer/dartserv"]
+# CMD ["/dartServer/dartserv"]
+CMD ["dart run /dartServer/bin/server.dart"]

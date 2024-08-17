@@ -24,13 +24,13 @@ Response newHandler(Request req) {
 
 Future<Response> addPlayerHandler(Request request) async {
   final id = request.params['id'];
-  // if (!gameSession.containsKey(id)) return Response.notFound("Game not found");
+  if (!gameSession.containsKey(id)) return Response.notFound("Game not found");
 
-  // // gameSession[id]!.add(Player(timeCreated: DateTime.now()));
-  // Future.delayed(
-  //   Duration(minutes: 2),
-  //   () => gameSession.remove(id),
-  // );
+  // gameSession[id]!.add(Player(timeCreated: DateTime.now()));
+  Future.delayed(
+    Duration(minutes: 5),
+    () => gameSession.remove(id),
+  );
 
   return Response.ok(
     await File('${Directory.current.path}/public/index.html').readAsString(),

@@ -14,3 +14,5 @@ ENV PATH="/home/codespace/flutter/bin:$PATH"
 
 RUN git clone https://github.com/flutter/flutter && \
     /home/codespace/flutter/bin/flutter config --enable-web
+
+RUN dart run ./bin/server.dart

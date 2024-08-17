@@ -16,6 +16,7 @@ COPY public bin/public
 FROM scratch
 COPY --from=build /runtime/ /
 COPY --from=build /app/bin/server /app/bin/
+COPY --from=build /app/bin/public /app/bin/
 
 # Start server.
 EXPOSE 8080

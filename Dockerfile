@@ -16,7 +16,7 @@ COPY public public
 FROM scratch
 COPY --from=build /runtime/ /
 COPY --from=build /app/server /app/
-COPY --from=build /app/public /app/
+COPY --from=build /app/public /app/public
 
 # Start server.
 EXPOSE 8080

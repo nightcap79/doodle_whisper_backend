@@ -15,4 +15,12 @@ ENV PATH="/home/codespace/flutter/bin:$PATH"
 RUN git clone https://github.com/flutter/flutter && \
     /home/codespace/flutter/bin/flutter config --enable-web
 
-RUN dart run ./bin/server.dart
+
+
+COPY . /dartServer 
+RUN mkdir build
+RUN dart compile exe ./bin/server -o ./build/dartserv
+
+FROM debian:buster-slim
+COPY --from=builder /dartServer/build /bin
+CMD ["dartserv"]

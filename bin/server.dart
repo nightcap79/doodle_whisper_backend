@@ -10,27 +10,33 @@ import 'model/player.dart';
 
 part 'handles.dart';
 
-// Configure routes.
-final _router = Router()
-  ..get('/', static)
-  ..get('/test', static)
-  ..get('/new', newHandler)
-  ..get('/add/<id>/', addPlayerHandler) //_addPlayerHandler
-  ..post('/add/<id>/submit', answerHandler) // ?name=<name>&answer=<answer>
-  ..get('/get/<id>/', getResultHandler);
-
 void main(List<String> args) async {
   // Use any available host or container IP (usually `0.0.0.0`).
   final ip = InternetAddress.anyIPv4;
 
-  // Configure a pipeline that logs requests.
-  final handler =
-      Pipeline().addMiddleware(logRequests()).addHandler(_router.call);
-
-  // final handler = Cascade().add(_router.call).add(static).handler;
-
   // For running in containers, we respect the PORT environment variable.
   final port = int.parse(Platform.environment['PORT'] ?? '8080');
-  final server = await serve(handler, ip, port);
+  final server = await createServer(ip, port);
   print('Server listening on port ${server.port}');
+}
+
+Future<HttpServer> createServer(InternetAddress address, int port) {
+  final handler = Cascade().add(createStaticHandler("public")).add(buildRootHandler()).handler;
+  return serve(handler, address, port);
+}
+
+Handler buildRootHandler() {
+  final pipeline = const Pipeline();
+  final router = Router()..mount('/', (context) => buildHandler()(context));
+  return pipeline.addHandler(router.call);
+}
+
+Handler buildHandler() {
+  final pipeline = const Pipeline().addMiddleware(logRequests());
+  final router = Router()
+    ..get('/new', newHandler)
+    ..get('/add/<id>/', addPlayerHandler) //_addPlayerHandler
+    ..post('/add/<id>/submit', answerHandler) // ?name=<name>&answer=<answer>
+    ..get('/get/<id>/', getResultHandler);
+  return pipeline.addHandler(router.call);
 }

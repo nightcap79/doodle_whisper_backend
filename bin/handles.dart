@@ -2,6 +2,14 @@ part of 'server.dart';
 
 Map<String, List<Player>> gameSession = {};
 
+// CORS Settings
+const corsHeaders = {
+  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Methods': 'GET, POST, DELETE, OPTIONS',
+  'Access-Control-Allow-Headers': 'Origin, Content-Type',
+  "content-type": 'application/json'
+};
+
 var static = createStaticHandler('public', defaultDocument: 'index.html', serveFilesOutsidePath: true); //
 
 Response rootHandler(Request req) {
@@ -18,7 +26,7 @@ Response newHandler(Request req) {
   gameSession['$id'] = [];
   return Response.ok(
     jsonEncode('${req.requestedUri.host}:${req.requestedUri.port}/add/$id/'),
-    headers: {"content-type": 'application/json'},
+    headers: corsHeaders,
   );
 }
 
@@ -63,7 +71,7 @@ Future<Response> answerHandler(Request req, String id) async {
 
   return Response.ok(
     jsonEncode('Your game id is $id  \nname=$name  answer=$answer submissionTime=$now'),
-    headers: {"content-type": 'application/json'},
+    headers: corsHeaders,
   );
 }
 
@@ -72,7 +80,7 @@ Response getResultHandler(Request req, String id) {
 
   return Response.ok(
     jsonEncode(gameSession[id]),
-    headers: {"content-type": 'application/json'},
+    headers: corsHeaders,
   );
 }
 
@@ -83,7 +91,7 @@ Response continueGameHandler(Request req, String id) {
 
   return Response.ok(
     jsonEncode('Ready for getting Answers'),
-    headers: {"content-type": 'application/json'},
+    headers: corsHeaders,
   );
 }
 
@@ -92,6 +100,6 @@ Response deleteGameHandler(Request req, String id) {
   gameSession.remove(id);
   return Response.ok(
     jsonEncode('Deleted'),
-    headers: {"content-type": 'application/json'},
+    headers: corsHeaders,
   );
 }

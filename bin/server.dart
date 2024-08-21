@@ -35,8 +35,10 @@ Handler buildHandler() {
   final pipeline = const Pipeline().addMiddleware(logRequests());
   final router = Router()
     ..get('/new', newHandler)
-    ..get('/add/<id>/', addPlayerHandler) //_addPlayerHandler
+    ..get('/add/<id>/', playerLandingHandler) //_addPlayerHandler
     ..post('/add/<id>/submit', answerHandler) // ?name=<name>&answer=<answer>
-    ..get('/get/<id>/', getResultHandler);
+    ..get('/new/<id>/', continueGameHandler)
+    ..get('/get/<id>/', getResultHandler)
+    ..delete('/<id>/', deleteGameHandler);
   return pipeline.addHandler(router.call);
 }

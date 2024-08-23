@@ -36,9 +36,11 @@ Handler buildHandler() {
   final router = Router()
     ..get('/new', newHandler)
     ..get('/add/<id>/', playerLandingHandler) //_addPlayerHandler
-    ..post('/add/<id>/submit', answerHandler) // ?name=<name>&answer=<answer>
+    ..post('/add/<id>/submitName', nameHandler) // ?name=<name>&answer=<answer>
+    ..post('/add/<id>/submitAnswer', answerHandler) // ?name=<name>&answer=<answer>
     ..get('/new/<id>/', continueGameHandler)
     ..get('/get/<id>/', getResultHandler)
+    ..get('/getUsers/<id>/', getUsersResultHandler)
     ..delete('/<id>/', deleteGameHandler);
   return pipeline.addHandler(router.call);
 }

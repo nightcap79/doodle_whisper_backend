@@ -46,6 +46,36 @@ Future<Response> playerLandingHandler(Request request) async {
   );
 }
 
+Future<Response> nameHandler(Request req, String id) async {
+  if (!gameSession.containsKey(id)) return Response.notFound("Game not found");
+  List<Player> list = gameSession[id] ?? [];
+  if (req.method != "POST") return Response.badRequest(body: 'Test OK\n');
+  final String query = await req.readAsString();
+  // var querySplit = query.split("&");
+  //querySplit[0].substring(5); //name=nightcap79&answer=hackerone
+  // querySplit[1].substring(7);
+  Map queryParams = Uri(query: query).queryParameters; // {name: nightcap79, answer: hackerone}
+  if (!queryParams.containsKey("name")) {
+    return Response.badRequest(body: 'Test OK\n');
+  }
+  var name = queryParams["name"];
+  for (var i = 0; i < list.length; i++) {
+    if (name == list[i].name) {
+      name = "$name${DateTime.now().millisecondsSinceEpoch}";
+      gameSession[id]!.add(Player(name: name));
+
+      return Response(401, body: jsonEncode(name));
+    }
+  }
+
+  gameSession[id]!.add(Player(name: name));
+
+  return Response.ok(
+    jsonEncode('Your game id is $id  \nname=$name'),
+    headers: corsHeaders,
+  );
+}
+
 Future<Response> answerHandler(Request req, String id) async {
   if (!gameSession.containsKey(id)) return Response.notFound("Game not found");
   List<Player> list = gameSession[id] ?? [];
@@ -80,6 +110,19 @@ Response getResultHandler(Request req, String id) {
 
   return Response.ok(
     jsonEncode(gameSession[id]),
+    headers: corsHeaders,
+  );
+}
+
+Response getUsersResultHandler(Request req, String id) {
+  if (!gameSession.containsKey(id)) return Response.notFound("Game not found");
+
+  return Response.ok(
+    jsonEncode(gameSession[id]!
+        .map(
+          (e) => e.name,
+        )
+        .toList()),
     headers: corsHeaders,
   );
 }

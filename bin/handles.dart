@@ -90,7 +90,7 @@ Future<Response> answerHandler(Request req, String id) async {
   }
   var name = queryParams["name"];
   for (var i = 0; i < list.length; i++) {
-    if (name == list[i].name) {
+    if (name == list[i].name && (list[i].answer != null)) {
       return Response(401, body: "Game not Started Yet");
     }
   }
@@ -130,7 +130,11 @@ Response getUsersResultHandler(Request req, String id) {
 Response continueGameHandler(Request req, String id) {
   if (!gameSession.containsKey(id)) return Response.notFound("Game not found");
 
-  gameSession[id] = [];
+  var list = gameSession[id];
+
+  for (var i = 0; i < list!.length; i++) {
+    list[i].answer = null;
+  }
 
   return Response.ok(
     jsonEncode('Ready for getting Answers'),

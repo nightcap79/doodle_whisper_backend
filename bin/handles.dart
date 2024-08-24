@@ -48,7 +48,8 @@ Future<Response> playerLandingHandler(Request request) async {
 
 Future<Response> nameHandler(Request req, String id) async {
   if (!gameSession.containsKey(id)) return Response.notFound("Game not found");
-  List<Player> list = gameSession[id] ?? [];
+  if (gameSession[id] == null) return Response.notFound("Game not found");
+  List<Player> list = gameSession[id]!;
   if (req.method != "POST") return Response.badRequest(body: 'Test OK\n');
   final String query = await req.readAsString();
   // var querySplit = query.split("&");
@@ -78,12 +79,14 @@ Future<Response> nameHandler(Request req, String id) async {
 
 Future<Response> answerHandler(Request req, String id) async {
   if (!gameSession.containsKey(id)) return Response.notFound("Game not found");
-  List<Player> list = gameSession[id] ?? [];
+  if (gameSession[id] == null) return Response.notFound("Game not found");
+  List<Player> list = gameSession[id]!;
   if (req.method != "POST") return Response.badRequest(body: 'Test OK\n');
   final String query = await req.readAsString();
   // var querySplit = query.split("&");
   //querySplit[0].substring(5); //name=nightcap79&answer=hackerone
   // querySplit[1].substring(7);
+
   Map queryParams = Uri(query: query).queryParameters; // {name: nightcap79, answer: hackerone}
   if (!queryParams.containsKey("name") || !queryParams.containsKey("answer")) {
     return Response.badRequest(body: 'Test OK\n');
@@ -97,7 +100,11 @@ Future<Response> answerHandler(Request req, String id) async {
   var answer = queryParams["answer"];
   int now = DateTime.now().millisecondsSinceEpoch;
 
-  gameSession[id]!.add(Player(timeOfSubmittion: now, answer: answer, name: name));
+  list.firstWhere(
+    (e) => e.name == name,
+  )
+    ..answer = answer
+    ..timeOfSubmittion = now;
 
   return Response.ok(
     jsonEncode('Your game id is $id  \nname=$name  answer=$answer submissionTime=$now'),

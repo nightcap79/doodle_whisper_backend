@@ -34,6 +34,7 @@ Handler buildRootHandler() {
 Handler buildHandler() {
   final pipeline = const Pipeline().addMiddleware(logRequests());
   final router = Router()
+    ..get('/', rootHandler)
     ..get('/new', newHandler)
     ..get('/add/<id>/', playerLandingHandler) //_addPlayerHandler
     ..post('/add/<id>/submitName', nameHandler) // ?name=<name>&answer=<answer>
